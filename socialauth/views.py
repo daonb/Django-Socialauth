@@ -79,15 +79,20 @@ def twitter_login_done(request):
     message = ''
     if request.user.is_authenticated():
         user = request.user
-        user_profile, created = TwitterUserProfile.objects.get_or_create(screen_name = twitter_user.screen_name,
-            defaults = dict(user=user, access_token=access_token, url=twitter_user.url, 
+        d = dict(user=user, access_token=access_token.key, url=twitter_user.url, 
                             location=twitter_user.location, description=twitter_user.description,
                             profile_image_url=twitter_user.profile_image_url)
-            )
+
+        user_profile, created = TwitterUserProfile.objects.get_or_create(screen_name = twitter_user.screen_name,
+            defaults = d)
         if not created:
                 #TODO:add a mesaage to the user that the fb account is already associated 
                 # with a diffrent user account
                 message = _('Twitter account is already associated with this account')
+        else:
+            profile = user.get_profile()
+            profile.set_icon_from_url(twitter_user.profile_image_url)
+            
         user = user_profile.user
 
     user = authenticate(twitter_user=twitter_user)
@@ -176,9 +181,9 @@ def facebook_login_done(request):
                 if not user.last_name:
                     user.last_name = fb_data['last_name']
                 user.save()
+                profile = user.get_profile()
+                profile.set_icon_from_url(fb_data['pic_small'])
             else:
-                #TODO:add a mesaage to the user that the fb account is already associated 
-                # with a diffrent user account
                 message = _('Facebook account is already associated with this account')
     user = authenticate(cookies=request.COOKIES)
     if user:
