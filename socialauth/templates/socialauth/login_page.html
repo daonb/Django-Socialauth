@@ -1,4 +1,4 @@
-{% extends 'socialauth/base.html' %}
+{% extends 'socialauth/socialauth_base.html' %}
 
 {% block html_declare %}
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
@@ -45,7 +45,7 @@ function facebook_onlogin(){
         <fb:login-button onlogin="facebook_onlogin();"></fb:login-button>
     </div>
     
-    <script type="text/javascript">  FB.init("{{ fb_api_key }}", "{% url socialauth_xd_receiver %}"); </script>
+    <script type="text/javascript">  FB.init("{{ FACEBOOK_API_KEY }}", "{% url socialauth_xd_receiver %}"); </script>
     
     <br />
     <br />
